@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Void Deck Survivor - SG Flood RPG</title>
+  <!-- Telegram Web App SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --primary: #0088cc;
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #f8fafc;
+      --accent: #38bdf8;
+      --success: #22c55e;
+      --danger: #ef4444;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 420px;
+      background: var(--card);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,255,255,0.1);
+      box-sizing: border-box;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+      background: #38bdf8;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .title-area h2 {
+      margin: 0;
+      font-size: 18px;
+      color: var(--accent);
+    }
+
+    .title-area p {
+      margin: 2px 0 0;
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    .score-badge {
+      background: rgba(56, 189, 248, 0.2);
+      color: var(--accent);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 14px;
+      text-align: center;
+      margin-bottom: 16px;
+      border: 1px solid var(--accent);
+    }
+
+    .dialogue-box {
+      background: rgba(0,0,0,0.3);
+      padding: 14px;
+      border-radius: 12px;
+      line-height: 1.5;
+      font-size: 14px;
+      margin-bottom: 20px;
+      border-left: 4px solid var(--accent);
+    }
+
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 14px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+
+    button:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .restart-btn {
+      background: var(--success);
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <div class="avatar">👧</div>
+      <div class="title-area">
+        <h2>Mei Ling (美玲)</h2>
+        <p>Youth Volunteer • FloodReady SG</p>
+      </div>
+    </div>
+
+    <div class="score-badge" id="score-display">
+      📊 Resilience Score: 50 pts
+    </div>
+
+    <div class="dialogue-box" id="dialogue">
+      "Hello! Heavy monsoon rain clouds are building up right above our HDB estate. PUB just issued a heavy rain warning!<br><br>I am heading out as a community volunteer to check on our neighbourhood. Would you like to team up with me and learn how to stay flood-safe?"
+    </div>
+
+    <div class="btn-group" id="action-buttons">
+      <button onclick="startStage1()">▶️ Start Adventure with Mei Ling!</button>
+    </div>
+  </div>
+
+  <script>
+    // Initialize Telegram Mini App SDK
+    if (window.Telegram && window.Telegram.WebApp) {
+      window.Telegram.WebApp.ready();
+      window.Telegram.WebApp.expand();
+    }
+
+    let score = 50;
+
+    function updateScore(points) {
+      score += points;
+      document.getElementById("score-display").innerText = `📊 Resilience Score: ${score} pts`;
+    }
+
+    // --- STAGE 1: WEATHER PREPAREDNESS ---
+    function startStage1() {
+      document.getElementById("dialogue").innerHTML = 
+        "<b>Stage 1 of 5: Pre-Departure Check</b><br><br>" +
+        "\"Before we step out into the rain, what is the best official app to check for live 2-hour rain radar updates in Singapore?\"";
+
+      document.getElementById("action-buttons").innerHTML = `
+        <button onclick="stage1Choice(true)">📱 Option A: Check the MyENV App for real-time rain radar</button>
+        <button onclick="stage1Choice(false)">📱 Option B: Check social media memes for weather updates</button>
+      `;
+    }
+
+    function stage1Choice(isCorrect) {
+      if (isCorrect) {
+        updateScore(15);
+        document.getElementById("dialogue").innerHTML = 
+          "<b>Mei Ling:</b> \"Awesome choice! The MyENV app gives real-time NEA rain radar alerts and canal water level updates so we can plan safe routes!\"";
+      } else {
+        updateScore(-10);
+        document.getElementById("dialogue").innerHTML = 
+          "<b>Mei Ling:</b> \"Oh dear! Social media might not be accurate. Always rely on official apps like MyENV for real-time weather alerts!\"";
+      }
+
+      document.getElementById("action-buttons").innerHTML = `
+        <button onclick="startStage2()">➡️ On to Stage 2!</button>
+      `;
+    }
+
+    // --- STAGE 2: LINKWAY & MOVING WATER ---
+    function startStage2() {
+      document.getElementById("dialogue").innerHTML = 
+        "<b>Stage 2 of 5: HDB Linkway Safety</b><br><br>" +
+        "\"Water is accumulating along the void deck walkway near the canal. Rainwater is rushing across the path.<br><br>What is our safest move?\"";
+
+      document.getElementById("action-buttons").innerHTML = `
+        <button onclick="stage2Choice(false)">👟 Option A: Dash through 20cm moving water in slippers</button>
+        <button onclick="stage2Choice(true)">🚶‍♂️ Option B: Use the elevated, covered ramp detour</button>
+      `;
+    }
+
+    function stage2Choice(isCorrect) {
+      if (isCorrect) {
+        updateScore(15);
+        document.getElementById("dialogue").innerHTML = 
+          "<b>Mei Ling:</b> \"Great thinking! PUB guidelines remind us to never walk through moving water deeper than 15cm because hidden drain covers might be open underneath!\"";
+      } else {
+        updateScore(-15);
+        document.getElementById("dialogue").innerHTML = 
+          "<b>Mei Ling:</b> \"Oh no, that's unsafe! Water deeper than 15cm can easily sweep someone off their feet, and hidden drain gratings pose serious danger!\"";
+      }
+
+      document.getElementById("action-buttons").innerHTML = `
+        <button onclick="startStage3()">➡️ On to Stage 3!</button>
+      `;
+    }
+
+    // --- STAGE 3: HDB GROUND-FLOOR PROTECTION ---
+    function startStage3() {
+      document.getElementById("dialogue").innerHTML = 
+        "<b>Stage 3 of 5: Ground-Floor Flat Safety</b><br><br>" +
+        "\"We're visiting Auntie Rose at her 1st-storey HDB flat. Water is starting to rise near her doorstep.<br><br>How can we help her protect her home electronics?\"";
+
+      document.getElementById("action-buttons").innerHTML = `
+        <button onclick="stage3Choice(true)">📦 Option A: Help elevate appliances & extension plugs off the floor</button>
+        <button onclick="stage3Choice(false)">🚪 Option B: Open the front door wide to let water flow through</button>
+      `;
+    }
+
+    function stage3Choice(isCorrect) {
+      if (isCorrect) {
+        updateScore(20);
+        document.getElementById("dialogue").innerHTML = 
+          "<b>Mei Ling:</b> \"Wonderful job! Lifting power plugs and home electronics above knee level prevents short circuits and keeps Auntie Rose's home safe!\"";
+      } else {
+        updateScore(-15);
+        document.getElementById("dialogue").innerHTML = 
+          "<b>Mei Ling:</b> \"Oh dear, opening the door lets water flood in faster! Elevating electrical items off the floor is always the best defense.\"";
+      }
+
+      document.getElementById("action-buttons").innerHTML = `
+        <button onclick="startStage4()">➡️ On to Stage 4!</button>
+      `;
+    }
+
+    // --- STAGE 4: CHOKED STORM DRAIN REPORTING ---
+    function startStage4() {
+      document.getElementById("dialogue").innerHTML = 
+        "<b>Stage 4 of 5: Choked Storm Drain</b><br><br>" +
+        "\"Near the bus stop, a roadside perimeter drain is overflowing because fallen leaves and trash are choking the grate.<br><br>What should we do?\"";
+
+      document.getElementById("action-buttons").innerHTML = `
+        <button onclick="stage4Choice(true)">📸 Option A: Snap a photo & report via the FloodReady SG Telegram Bot</button>
+        <button onclick="stage4Choice(false)">⚠️ Option B: Try to lift the heavy iron drain grate by hand</button>
+      `;
+    }
+
+    function stage4Choice(isCorrect) {
+      if (isCorrect) {
+        updateScore(20);
+        document.getElementById("dialogue").innerHTML = 
+          "<b>Mei Ling:</b> \"Excellent choice! Reporting via the bot alerts Town Council and PUB emergency dispatch teams safely without risking injury!\"";
+      } else {
+        updateScore(-20);
+        document.getElementById("dialogue").innerHTML = 
+          "<b>Mei Ling:</b> \"Please be careful! Heavy iron drain covers in rushing water can injure your hands or feet. Always leave grate maintenance to official crews!\"";
+      }
+
+      document.getElementById("action-buttons").innerHTML = `
+        <button onclick="startStage5()">➡️ Final Stage 5!</button>
+      `;
+    }
+
+    // --- STAGE 5: TRANSIT & LOW-LYING ROADS ---
+    function startStage5() {
+      document.getElementById("dialogue").innerHTML = 
+        "<b>Stage 5 of 5: Transit & Road Ponding</b><br><br>" +
+        "\"We're near a low-lying road corridor (like Dunearn Road). Roadside ponding is rising and bus services are delayed.<br><br>What is our smartest travel option?\"";
+
+      document.getElementById("action-buttons").innerHTML = `
+        <button onclick="stage5Choice(true)">🚌 Option A: Wait at an elevated HDB void deck & check transit alerts</button>
+        <button onclick="stage5Choice(false)">🏃 Option B: Try wading across the flooded road to catch a bus</button>
+      `;
+    }
+
+    function stage5Choice(isCorrect) {
+      if (isCorrect) {
+        updateScore(15);
+        document.getElementById("dialogue").innerHTML = 
+          "<b>Mei Ling:</b> \"Smart decision! Remaining sheltered at elevated void decks avoids road hazards while checking MyTransport SG for bus diversions!\"";
+      } else {
+        updateScore(-15);
+        document.getElementById("dialogue").innerHTML = 
+          "<b>Mei Ling:</b> \"Oh no! Wading across flooded roads is very dangerous due to hidden obstacles and moving vehicles. Staying sheltered is much safer!\"";
+      }
+
+      document.getElementById("action-buttons").innerHTML = `
+        <button onclick="endGame()">🏆 See Final Results</button>
+      `;
+    }
+
+    // --- END GAME & RESULTS ---
+    function endGame() {
+      let badge = "";
+      let title = "";
+
+      if (score >= 80) {
+        badge = "🏆 RANK: SINGAPORE FLOOD SAFETY HERO";
+        title = "Outstanding job! You demonstrated complete flood awareness, helped your neighbours, and kept your community safe!";
+      } else if (score >= 60) {
+        badge = "🥈 RANK: COMMUNITY YOUTH VOLUNTEER";
+        title = "Good effort! You showed great safety instincts. Keep reviewing PUB flood safety guidelines!";
+      } else {
+        badge = "🌧️ RANK: JUNIOR FLOOD EXPLORER";
+        title = "Nice try! Play again with Mei Ling to sharpen your Singapore flood preparedness skills!";
+      }
+
+      document.getElementById("dialogue").innerHTML = `
+        <b>🏁 GAME OVER - VOID DECK SURVIVOR</b><br><br>
+        <b>${badge}</b><br><br>
+        <i>${title}</i>
+      `;
+
+      document.getElementById("action-buttons").innerHTML = `
+        <button class="restart-btn" onclick="location.reload()">🔄 Play Again</button>
+      `;
+    }
+  </script>
+</body>
+</html>
